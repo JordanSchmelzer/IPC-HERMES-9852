@@ -1,0 +1,2 @@
+class BoardForecast:
+    Timestamp=""

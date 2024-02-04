@@ -1,0 +1,2 @@
+class BoardDeparted:
+    Timestamp=""

@@ -1,0 +1,2 @@
+class SendBoardInfo:
+    Timestamp=""

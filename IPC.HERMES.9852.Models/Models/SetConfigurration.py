@@ -1,0 +1,2 @@
+class SetConfigurration:
+    Timestamp=""
