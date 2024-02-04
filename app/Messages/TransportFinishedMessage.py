@@ -1,0 +1,2 @@
+class TransportFinishedMessage:
+    Timestamp=""

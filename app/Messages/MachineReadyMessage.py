@@ -1,0 +1,2 @@
+class MachineReadyMessage:
+    Timestamp=""

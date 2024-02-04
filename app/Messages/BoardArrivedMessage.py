@@ -1,0 +1,3 @@
+class BoardArrivedMessage:
+    Timestamp=""
+    BoardArrived=""

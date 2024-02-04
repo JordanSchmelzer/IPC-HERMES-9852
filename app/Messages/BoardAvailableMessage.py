@@ -1,0 +1,2 @@
+class BoardAvailableMessage:
+    Timestamp=""

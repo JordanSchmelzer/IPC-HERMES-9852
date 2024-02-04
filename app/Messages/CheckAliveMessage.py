@@ -1,0 +1,2 @@
+class CheckAliveMessage:
+    Timestamp=""

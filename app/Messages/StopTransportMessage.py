@@ -1,0 +1,2 @@
+class StopTransportMessage:
+    Timestamp=""

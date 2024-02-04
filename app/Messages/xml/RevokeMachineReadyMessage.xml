@@ -1,0 +1,6 @@
+<Hermes Timestamp="2017-07-16T19:20:30.452">
+    <CheckAlive>
+        <Type>1 or 2</Type>
+        <Id>"GUID that is at least 80 bytes long"</Id>
+    </CheckAlive>
+</Hermes>

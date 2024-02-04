@@ -1,0 +1,2 @@
+class NotificationMessage:
+    Timestamp=""

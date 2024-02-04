@@ -1,0 +1,2 @@
+class GetConfigurationMessage:
+    Timestamp=""

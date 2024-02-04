@@ -1,0 +1,2 @@
+class SupervisoryServiceDescriptionMessage:
+    Timestamp=""

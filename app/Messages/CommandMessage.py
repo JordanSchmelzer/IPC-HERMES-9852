@@ -1,0 +1,2 @@
+class CommandMessage:
+    Timestamp=""
