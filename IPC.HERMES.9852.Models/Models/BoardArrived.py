@@ -76,29 +76,6 @@ BoardTransfer may be one of the following values:
 '''
 
 class BoardArrived:
-    __slots__ = ("MachineId"
-                 ,"UpstreamLaneId"
-                 ,"UpstreamInterfaceId"
-                 ,"MagazineId"
-                 ,"SlotId"
-                 ,"BoardTransfer"
-                 ,"BoardId"
-                 ,"BoardIdCreatedBy"
-                 ,"FailedBoard"
-                 ,"ProductTypeId"
-                 ,"FlippedBoard"
-                 ,"TopBarcode"
-                 ,"BottomBarcode"
-                 ,"Length"
-                 ,"Width"
-                 ,"Thickness"
-                 ,"ConveyorSpeed"
-                 ,"TopClearanceHeight"
-                 ,"BottomClearanceHeight"
-                 ,"Weight"
-                 ,"WorkOrderId"
-                 )
-    
     def __init__(self):
         self.MachineId = "this_machine_id"
         self.UpstreamLaneId = 1
