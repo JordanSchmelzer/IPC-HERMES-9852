@@ -4,61 +4,6 @@ supervisory system to indicate that a PCB has  arrived  at  this  machine.
 The  BoardArrived  message  shall  be  sent  immediately  after  
 sending  the corresponding StopTransport message. 
 
-Params:
-MachineId: (string)
-    ID / name of this machine for identifying it in a Hermes enabled production line.
-UpstreamLaneId: (int)
-    The lane on the upstream side. Lanes are enumerated looking 
-    downstream  from  right  to  left  beginning 
-    with 1.
-UpstreamInterfaceId: (string)
-    The  ID  of  the  transportation  interface  on 
-    the upstream side.
-MagazineId: (string)
-    Barcode of a magazine, required to 
-    identify the magazine from which the 
-    Board was transferred
-SlotId: (int)
-    Indicates the slot in the magazine, 
-    enumerated from bottom to top, beginning 
-    with 1.
-BoardTransfer: (int)
-    A value of the list below
-BoardId: (string)
-    Indicating the GUID of the available board
-BoardIdCreatedBy: (string)
-    MachineId  of  the  machine  which  created the BoardID
-    (the first machine in a 
-    consecutive row of machines implementing this protocol). 
-    The MachineId is part of the Hermes configuration.
-FailedBoard: (int)
-    A value of the list below. 
-ProductTypeId: (string)
-    Identifies a collection of PCBs sharing 
-    common properties. 
-FlippedBoard: (int)
-    A value of the list below
-TopBarcode: (string)
-    The barcode of the top side of the PCB
-BottomBarcode: (string)
-    The  barcode  of  the  bottom  side  of  the PCB.
-Length: (float)
-    PCB transfer in millimeter per second
-Width: (float)
-    PCB transfer in millimeter per second
-Thickness: (float)
-    PCB transfer in millimeter per second
-ConveyorSpeed: (float)
-    The  conveyor  speed  used  for  the  PCB transfer in millimeter per second
-TopClearanceHeight: (float)
-    The clearance height for the top side of the PCB in millimeter. 
-BottomClearanceHeight: (float)
-    The clearance height for the bottom side of the PCB in millimeter
-Weight: (float)
-    The weight of the PCB in grams.
-WorkOrderId: (string)
-    Identifies the work order for production of the PCB.
-    
 FailedBoard may be one of the following values: 
 0 Board of unknown quality available 
 1 Good board available 
