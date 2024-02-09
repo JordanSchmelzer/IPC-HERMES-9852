@@ -14,5 +14,6 @@ Id.
 '''
 
 class CheckAlive:
-    self.Type = 0
-    self.Id = ""
+    def __init__(self):
+        self.Type = 0
+        self.Id = ""

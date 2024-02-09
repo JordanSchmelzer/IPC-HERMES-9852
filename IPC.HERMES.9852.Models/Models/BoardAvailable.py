@@ -22,11 +22,3 @@ class BoardAvailable:
         self.TopClearanceHeight = 1.0
         self.BottomClearanceHeight = 1.0
         self.Weight = 1.0
-        
-    def GenerateXML():
-        root = ET.Element("Hermes",{"Timestamp":"somedate"})
-        print(ET.tostring(root, encoding='utf8').decode('utf8'))
-        print(root.atrib)
-    
-x = BoardAvailable()
-x.GenerateXML

@@ -12,7 +12,7 @@ the transport.
 as a protocol error. Therefore the connection would need to be re-established
 '''
 
-class StopTransport
+class StopTransport:
     def __init__(self):
         self.TransferState = 1
         self.BoardId = ""

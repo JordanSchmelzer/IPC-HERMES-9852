@@ -9,20 +9,20 @@ Notification of type “BoardForecastError”.
 
 class BoardDeparted:
     def __init__(self):
-        ForecastId = ""
-        TimeUntilAvailable = ""
-        BoardId = ""
-        BoardIdCreatedBy = ""
-        FailedBoard = 0
-        ProductTypeId = ""
-        FlippedBoard = 0
-        TopBarcode = ""
-        BottomBarcode = ""
-        Length = 1.0
-        Width = 1.0
-        Thickness = 1.0
-        ConveyorSpeed = 1.0
-        TopClearanceHeight =1.0
-        BottomClearanceHeight = 1.0
-        Weight = 1.0
-        WorkOrderId = ""
+        self.ForecastId = ""
+        self.TimeUntilAvailable = ""
+        self.BoardId = ""
+        self.BoardIdCreatedBy = ""
+        self.FailedBoard = 0
+        self.ProductTypeId = ""
+        self.FlippedBoard = 0
+        self.TopBarcode = ""
+        self.BottomBarcode = ""
+        self.Length = 1.0
+        self.Width = 1.0
+        self.Thickness = 1.0
+        self.ConveyorSpeed = 1.0
+        self.TopClearanceHeight =1.0
+        self.BottomClearanceHeight = 1.0
+        self.Weight = 1.0
+        self.WorkOrderId = ""
