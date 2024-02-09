@@ -12,7 +12,7 @@ GUID must match the regular expression
  
 FailedBoard may be one of the following values: 
 0 Board of unknown quality available 
-1 Good board available 
+1 Good board available
 2 Failed board available 
  
 FlippedBoard may be one of the following values: 
