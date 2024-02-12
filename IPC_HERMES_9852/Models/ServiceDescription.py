@@ -11,10 +11,10 @@ version supported by a machine need to be listed in the SupportedFeatures list t
 
 class ServiceDescription:
     def __init__(self):    
-        self.MachineId = ""
-        self.LaneId = 0
-        self.InterfaceId = ""
-        self.Version = ""
+        self.MachineId = "1"
+        self.LaneId = 1
+        self.InterfaceId = "1"
+        self.Version = "100.100"
         self.SupportedFeatures = {
             "FeatureCheckAliveResponse": 1
             ,"FeatureBoardForecast":1

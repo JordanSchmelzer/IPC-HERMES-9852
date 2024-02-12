@@ -18,6 +18,8 @@ server.bind(ADDR)
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
 
+    # Recieve downstream machine service description
+
     connected = True
     while connected:
         msg_length = conn.recv(HEADER).decode(FORMAT)  # blocking, #bytes
@@ -27,6 +29,8 @@ def handle_client(conn, addr):
             if msg == DISCONNECT_MESSAGE:
                 connected = False
                 print(f"[DISCONNECTED] fom host: {addr}")
+                return
+            
              
         print(f"[{addr}] {msg}")
         # conn.send("Msg recieved".encode(FORMAT))

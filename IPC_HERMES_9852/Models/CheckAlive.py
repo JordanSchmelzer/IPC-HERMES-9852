@@ -15,5 +15,5 @@ Id.
 
 class CheckAlive:
     def __init__(self):
-        self.Type = 0
+        self.Type = 1
         self.Id = ""
