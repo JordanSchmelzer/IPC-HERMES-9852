@@ -31,8 +31,14 @@ def handle_client(conn, addr):
     connected = True
     
     while connected:
-        time.sleep(3)
-        print("waiting 3 seconds")
+        # global time since last check alive
+        
+        # listen for the check alive message
+        # if a message isnt recieved in 3 seconds, send disconnect to client, kill conn
+        
+        # respond to downstream machine with check alive 
+        pass
+
 
 def start():
     server_socket.listen()
