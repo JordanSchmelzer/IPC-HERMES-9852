@@ -1,16 +1,9 @@
 import asyncio
 from asyncio import AbstractEventLoop
 import socket
-import logging
-import signal
 from typing import List
-import xml.etree.ElementTree as ET
-from util.delay_functions import *
-from IPC_HERMES_9852.Messages import ServiceDescriptionMessage
-from IPC_HERMES_9852.Models import ServiceDescription
 
 
-# Define constants
 HOST: str = '127.0.0.1'
 PORT: int = 50100
 ADDR: tuple = (HOST, PORT)
@@ -19,74 +12,64 @@ ENCODING: str = 'utf-8'
 XML_HEADER: str = '<?xml version="1.0" encoding="UTF-8"?>'
 DISCONNECT_MESSAGE: str = '!DISCONNECT'
 
+downstream_machines = []
+upstream_machines = []
+tasks = set()
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(ADDR)
-server_socket.setblocking(False)
-
-
-async def check_alive_ping(conn: socket, addr) -> None:
-    bytes_sent = conn.sendall(("<Hermes><CheckAlive>Ping</CheckAlive></Hermes>").encode(ENCODING))
-    logging.debug(f'[INFO] sent this many bytes to addr {bytes_sent}')
-                                                                                                               
-
-async def check_alive(conn: socket, addr):
-    check_alive_task = asyncio.create_task(delay(1))
+async def add_machine(connection: socket, loop: AbstractEventLoop) -> None:
     try:
-        result = await asyncio.wait_for(check_alive_task, timeout=3)
-        print(result)
-    except asyncio.exceptions.TimeoutError:
-        print('failed to print')
+        pass
+    except Exception as e:
+        pass
+    finally:
+        pass
 
 
-def handle_client(conn, addr):
-    logging.info(f"[NEW CONNECTION] {addr} connected.")
+async def message_handler(conn):
+    pass
 
-    connected = True
-    while connected:
-        msg_length = conn.recv(BUFFER_SIZE).decode(ENCODING)  # blocking, #bytes
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(ENCODING) # blocking, msg
-            
-            if msg == DISCONNECT_MESSAGE:
-                connected = False
-                print(f"[DISCONNECTED] fom host: {addr}")
-                return
-            
-            if msg == "":
-                pass
-                
-            
-        print(f"[{addr}] {msg}")
-        # conn.send("Msg recieved".encode(FORMAT))
 
-    conn.close()
-
+async def connection_listener(server_socket, loop):
+    while True:
+        connection, address = await loop.sock_accept(server_socket)
+        connection.setblocking(False)
+        print(f"Got a connection from {address}")
+        message_task = asyncio.ceate_task(message_handler(connection, loop))
+        tasks.add(message_task)
 
 class GracefulExit(SystemExit):
-    logging.critical("Request to exit interpreter, closing program.")
     pass
 
 def shutdown():
+    print("Shutting down with GracefulExit")
     raise GracefulExit()
 
+async def close_tasks(tasks: List[asyncio.Task]):
+    waiters = [asyncio.wait_for(task,2) for task in tasks]
+    for task in waiters:
+        try:
+            await task
+        except asyncio.exceptions.TimeoutError:
+            print("A task timed out")
+            pass
 
 async def main():
-    print(f"[LISTENING] Server is listening on {HOST}")
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    
+    server_socket.setblocking(False)
+    server_socket.bind(ADDR)
+    print(f"Bound server socket to HOST {HOST} on PORT {PORT}")
     server_socket.listen()
-    while True:
-        conn, addr = server_socket.accept()  # blocking
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f"[ACTIVE CONNECTIOINS] {threading.active_count() - 1}")
-
+    
+    await connection_listener(server_socket, loop)
 
 loop = asyncio.new_event_loop()
 
 try:
     loop.run_until_complete(main())
 except GracefulExit:
-    loop.run_until_complete()
+    loop.run_until_complete(close_tasks())
 finally:
+    print(f"[SHUTDOWN] Shutting down the server")
     loop.close()
