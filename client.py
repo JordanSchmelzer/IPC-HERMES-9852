@@ -10,9 +10,6 @@ HOST = "127.0.0.1"
 ADDR = (HOST,DEFAULT_PORT)
 BUFFER_SIZE = 1024
  
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.settimeout(3)
-client.connect(ADDR)
 
 def pad(data: str, pad_len: int, padding: chr, left=True) -> str:
     add_padding = pad_len - data.__len__
@@ -46,11 +43,25 @@ hermes_message = tree.getroot()
 
 #TIMESTAMP
 timestamp = hermes_message.get('Timestamp')
-print(f'Hermes timestamp: {timestamp}')
+# print(f'Hermes timestamp: {timestamp}')
 
-for child in hermes_message:
-    print(child.tag, child.attrib)
+# for child in hermes_message:
+    # print(child.tag, child.attrib)
 
-send("Hello World!")
-send("Send can be called more than once")
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.settimeout(3)
+client.connect(ADDR)
+
+send("""<?xml version="1.0"?>
+     <Hermes Timestamp="2017-07-16T19:20:30.452">
+        <ServiceDescription>
+            <MachineId>rattle</MachineId>
+            <LaneId></LaneId>
+            <InterfaceId></InterfaceId>
+            <Version></Version>
+            <SupportedFeatures>
+                <Feature1></Feature1>
+            </SupportedFeatures>
+        </ServiceDescription>
+    </Hermes>""")
 send(DISCONNECT_MESSAGE)

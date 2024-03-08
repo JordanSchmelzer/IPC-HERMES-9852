@@ -44,7 +44,6 @@ class ConveyorBelt:
         self.state.stop_conveyor()
 
 if __name__ == "__main__":
-    conveyor_belt = ConveyorBelt()
-    conveyor_belt.set_conveyor()
+    conveyor_belt = ConveyorBelt() # initialize off
     conveyor_belt.set_conveyor()
     conveyor_belt.stop_conveyor()
