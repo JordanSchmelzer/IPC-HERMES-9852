@@ -33,35 +33,64 @@ def pad(data: str, pad_len: int, padding: chr, left=True) -> str:
 def send(msg):
     message = msg.encode(ENCODING)
     msg_length = len(message)
+    print(f'[INFO]: sending payload of length {msg_length}')
     send_length = str(msg_length).encode(ENCODING)
     send_length += b' ' * (BUFFER_SIZE - len(send_length))
     client.send(send_length)
     client.send(message)
+
+def recieve(msg):
+    message_len = client.recv()
+    print(message_len)
+    message_len = client.recv(len(message_len))
     
-tree = ET.parse('./IPC_HERMES_9852/Messages/xml/CheckAliveMessage.xml')
-hermes_message = tree.getroot()
-
-#TIMESTAMP
-timestamp = hermes_message.get('Timestamp')
-# print(f'Hermes timestamp: {timestamp}')
-
-# for child in hermes_message:
-    # print(child.tag, child.attrib)
-
+    
+print(f'[STARTUP]')
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.settimeout(3)
 client.connect(ADDR)
 
+# Send ServiceDescription To Upstream Machine
 send("""<?xml version="1.0"?>
-     <Hermes Timestamp="2017-07-16T19:20:30.452">
-        <ServiceDescription>
-            <MachineId>rattle</MachineId>
-            <LaneId></LaneId>
-            <InterfaceId></InterfaceId>
-            <Version></Version>
-            <SupportedFeatures>
-                <Feature1></Feature1>
-            </SupportedFeatures>
-        </ServiceDescription>
-    </Hermes>""")
+        <Hermes Timestamp="2017-07-16T19:20:30.452">
+            <ServiceDescription>
+                <MachineId>rattle</MachineId>
+                <LaneId>1</LaneId>
+                <InterfaceId>1</InterfaceId>
+                <Version>1.2</Version>
+                <SupportedFeatures>
+                    <CheckAlive>True</CheckAlive>
+                </SupportedFeatures>
+            </ServiceDescription>
+        </Hermes>""")
+
+# Recieve the Upsteam Machines ServiceDescription                                                      
+message_len = client.recv(2)
+print(f'[INFO]: payload length: {message_len.decode("UTF-8")}')
+message = client.recv(11)
+print(f'[INFO]: payload recieved: {message.decode("UTF-8")}')
+
+
+# Send MachineReady
+send("""<?xml version="1.0"?>
+            <Hermes Timestamp="2017-07-16T19:20:30.452">
+                <MachineReady>
+                    <FailedBoard>0</FailedBoard>
+                    <ForecastId>1000000001234</ForecastId>
+                    <BoardId>123e4567-e89b-12d3-a456-426655440000</BoardId>
+                    <ProductTypeId>TestProduct</ProductTypeId>
+                    <FlippedBoard>0</FlippedBoard>
+                    <Length>40</Length>
+                    <Width>100</Width>
+                    <Thickness>2</Thickness>
+                    <ConveyorSpeed>30</ConveyorSpeed>
+                    <TopClearanceHeight>1</TopClearanceHeight>
+                    <BottomClearanceHeight>1</BottomClearanceHeight>
+                    <Weight>123</Weight>
+                    <WorkOrderId>1780123</WorkOrderId>
+                </MachineReady>
+            </Hermes>""")
+
+
+# Disconnect from the upstream machine
 send(DISCONNECT_MESSAGE)
+print(f'[SHUTDOWN]')

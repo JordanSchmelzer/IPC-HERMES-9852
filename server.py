@@ -23,18 +23,17 @@ async def connection_handler(conn: socket, addr: tuple):
             data_len = int(data_len)
             message = await loop.sock_recv(conn,data_len)
             message = message.decode(ENCODING)
-            # print(f"[INFO]: Message contents: {message}")
-            
-            # pass the message to the hermes state machine
-            this_machine.state.handle(message)
             
             if message == DISCONNECT_MESSAGE:
                 connected = False
                 print(f"[INFO]: Client disconnected: {addr}")
                 conn.close()
+                
+            if message != DISCONNECT_MESSAGE:
+                await this_machine.state.handle(message, conn)
         except Exception as e:
             print(f"[ERROR]: {e}")
-
+    
 
 async def connection_listener(server_socket, loop):
     while True:
@@ -77,13 +76,13 @@ async def main():
 
 
 if __name__ == "__main__":
-    this_machine = hermes_states.Machine()
     downstream_machines = []
     upstream_machines = []
     tasks = set()
     
     loop = asyncio.new_event_loop()
-
+    this_machine = hermes_states.Machine(loop)
+    
     try:
         print(f"[STARTUP]: Starting Server")
         loop.run_until_complete(main())
