@@ -81,7 +81,7 @@ if __name__ == "__main__":
     tasks = set()
     
     loop = asyncio.new_event_loop()
-    this_machine = hermes_states.Machine(loop)
+    this_machine = hermes_states.Machine()
     
     try:
         print(f"[STARTUP]: Starting Server")
