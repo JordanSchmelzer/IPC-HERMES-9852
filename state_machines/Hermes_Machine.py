@@ -1,14 +1,18 @@
-import asyncio
 import socket
 import xml.etree.ElementTree as ET
+from abc import ABC, abstractmethod 
+from typing import List
 
 
-class ProtocolState:
+class IProtocolState:
     async def handle(self) -> None:
         raise NotImplementedError()
         
+    def notify_observer() -> None:
+        raise NotImplementedError()
+   
         
-class NotConnected(ProtocolState):
+class NotConnected(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
 
@@ -21,15 +25,16 @@ class NotConnected(ProtocolState):
             for child in root:
                 print(child.tag, child.attrib)
                 if child.tag == "ServiceDescription":
-                    new_machine = DownstreamMachine(message, conn)
-                    self.machine.downstream_connections.append(new_machine)
+                    # new_machine = DownstreamMachine(message, conn)
+                    # self.machine.downstream_connections.append(new_machine)
                     self.machine.state = self.machine.service_description_downstream
-                    print(self.machine.state, new_machine.service_description)
+                    self.machine.update_state()
         except Exception as e:
             print(f"[ERROR]: {e}")
 
+    async def 
 
-class ServiceDescriptionDownstream(ProtocolState):
+class ServiceDescriptionDownstream(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
@@ -45,61 +50,109 @@ class ServiceDescriptionDownstream(ProtocolState):
         except Exception as e:
             print(f"[ERROR]: {e}")
         
-class NotAvailableNotReady(ProtocolState):
+        
+class NotAvailableNotReady(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
+       
         
-class BoardAvailable(ProtocolState):
+class BoardAvailable(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
+     
         
-class AvailableAndReady(ProtocolState):
+class AvailableAndReady(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
+     
         
-class MachineReady(ProtocolState):
+class MachineReady(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
+    
         
-class TransportStopped(ProtocolState):
+class TransportStopped(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
 
-class Transporting(ProtocolState):
+
+class Transporting(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
+  
         
-class TransportFinished(ProtocolState):
+class TransportFinished(IProtocolState):
     def __init__(self, machine):
         self.machine = machine
     
     def handle(self):
         print("do something with the message")
-        
-class Machine:
-    def __init__(self):
-        self.upstream_connections = []
-        self.downstream_connections = []
-        self.currrent_message = ""
-         
+
+
+class IObservableMachine(ABC):
+    '''
+    The Observable Interface declares a set of methods for managing subscribers
+    '''
+    
+    @abstractmethod
+    def attach (self, observer: IObserver) -> None:
+        '''
+        Attach an observer to the subject
+        '''
+
+    @abstractmethod
+    def detach(self, observer: IObserver) -> None:
+        """
+        Detach an observer from the subject.
+        """
+        pass
+    
+    @abstractmethod
+    def notify(self) -> None:
+        """
+        Notify all observers about an event
+        """
+        pass
+
+
+class IObserver(ABC):
+    """
+    The Observer interrface declarers the update method, used by Observables
+    """
+    
+    @abstractmethod
+    def update(self, observable: IObservableMachine)-> None:
+        """
+        Recieve update fom the Observable object
+        """
+        pass
+
+
+class ConveyorBeltObserver(IObserver):
+    def update(self, observable: IObservableMachine)->None:
+        print(f"Observer: The conveyor belt got an update from {observable}")
+
+
+class Machine(IObservableMachine):
+    def __init__(self):  
         self.not_connected = NotConnected(self)
         self.service_description_downstream = ServiceDescriptionDownstream(self)
         self.not_available_not_ready = NotAvailableNotReady(self)
@@ -111,18 +164,42 @@ class Machine:
         self.transport_finished = TransportFinished(self)
         
         self.state = self.not_connected
+        """
+        Current state of the Machine dictated by Hermes Protocol
+        """
         
+        self.observers: List[IObserver] = []
+        """
+        List of subscribers. This could be machine components like a conveyor belt.
+        """
+        
+    async def attach(self, observer: ConveyorBeltObserver) -> None:
+        print("Observable: Attached an observer")
+        self.observers.append(observer)
+
+    async def detatch(self, observer: ConveyorBeltObserver) -> None:
+        print("Observable: Detatched an observer")
+        self.observers.remove(observer)
+
+    async def notify(self)-> None:
+        for observer in self.observers:
+            observer.update(self)
+
+    async def some_business_logic(self, input) -> None:
+        """
+        template: this could have been the handle method
+        """
+        
+        self.state = self.transporting
+        print(f'Machine: my state has just changed to {input}')
+        self.notify()
+
     async def handle(self):
         self.state.handle()
+        """
+        Handle the TCP payload in one of the finite states
+        """
 
-class DownstreamMachine:
-    def __init__(self, message: str, conn: socket):
-        self.service_description = message
-        self.socket_conn = conn
-
-class UpstreamMachine:
-    def __init__(self, message:str):
-        ...
 
 if __name__ == "__main__":
     this_machine = Machine() # initialize not connected
