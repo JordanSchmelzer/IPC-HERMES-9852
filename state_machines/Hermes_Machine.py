@@ -1,8 +1,7 @@
-import socket
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod 
 from typing import List
-
+import asyncio
 
 class IProtocolState:
     async def handle(self) -> None:
@@ -28,11 +27,16 @@ class NotConnected(IProtocolState):
                     # new_machine = DownstreamMachine(message, conn)
                     # self.machine.downstream_connections.append(new_machine)
                     self.machine.state = self.machine.service_description_downstream
-                    self.machine.update_state()
+                    #TODO: do something after setting the state here or in serverv
+                    x = Observer()
+                    self.machine.observers.append(x)
+                    self.machine.notify()
+                    # await self.machine.handle()
+                    await self.machine.handle(message)
+                    
         except Exception as e:
             print(f"[ERROR]: {e}")
 
-    async def 
 
 class ServiceDescriptionDownstream(IProtocolState):
     def __init__(self, machine):
@@ -107,30 +111,11 @@ class TransportFinished(IProtocolState):
         print("do something with the message")
 
 
-class IObservableMachine(ABC):
+class IObservable(ABC):
     '''
     The Observable Interface declares a set of methods for managing subscribers
     '''
-    
-    @abstractmethod
-    def attach (self, observer: IObserver) -> None:
-        '''
-        Attach an observer to the subject
-        '''
 
-    @abstractmethod
-    def detach(self, observer: IObserver) -> None:
-        """
-        Detach an observer from the subject.
-        """
-        pass
-    
-    @abstractmethod
-    def notify(self) -> None:
-        """
-        Notify all observers about an event
-        """
-        pass
 
 
 class IObserver(ABC):
@@ -139,19 +124,19 @@ class IObserver(ABC):
     """
     
     @abstractmethod
-    def update(self, observable: IObservableMachine)-> None:
+    def update(self, observable: IObservable)-> None:
         """
         Recieve update fom the Observable object
         """
         pass
 
 
-class ConveyorBeltObserver(IObserver):
-    def update(self, observable: IObservableMachine)->None:
+class Observer(IObserver):
+    def update(self, observable: IObservable)->None:
         print(f"Observer: The conveyor belt got an update from {observable}")
 
 
-class Machine(IObservableMachine):
+class Machine(IObservable):
     def __init__(self):  
         self.not_connected = NotConnected(self)
         self.service_description_downstream = ServiceDescriptionDownstream(self)
@@ -173,15 +158,15 @@ class Machine(IObservableMachine):
         List of subscribers. This could be machine components like a conveyor belt.
         """
         
-    async def attach(self, observer: ConveyorBeltObserver) -> None:
+    async def attach(self, observer) -> None:
         print("Observable: Attached an observer")
         self.observers.append(observer)
 
-    async def detatch(self, observer: ConveyorBeltObserver) -> None:
+    async def detatch(self, observer) -> None:
         print("Observable: Detatched an observer")
         self.observers.remove(observer)
 
-    async def notify(self)-> None:
+    def notify(self)-> None:
         for observer in self.observers:
             observer.update(self)
 
@@ -194,8 +179,8 @@ class Machine(IObservableMachine):
         print(f'Machine: my state has just changed to {input}')
         self.notify()
 
-    async def handle(self):
-        self.state.handle()
+    async def handle(self, message):
+        await self.state.handle(message)
         """
         Handle the TCP payload in one of the finite states
         """

@@ -1,8 +1,8 @@
 import asyncio
 from asyncio import AbstractEventLoop
-import socket
+import socket   
 from typing import List
-from state_machines import hermes_states
+from state_machines import Hermes_Machine
 
 HOST: str = '127.0.0.1'
 PORT: int = 50100
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     tasks = set()
     
     loop = asyncio.new_event_loop()
-    this_machine = hermes_states.Machine()
+    this_machine = Hermes_Machine.Machine()
     
     try:
         print(f"[STARTUP]: Starting Server")
